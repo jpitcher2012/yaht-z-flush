@@ -42,12 +42,12 @@ Devvit.addCustomPostType({
       onMessage: (data: any) => {
         
         // If the leaderboard for this post was updated
-        if(data.eventType == "leaderboard-update" && data.postId == _context.postId && (data.username != username || data.timestamp != userLastGameTimestamp)){
+        if(data?.eventType == "leaderboard-update" && data.postId == _context.postId && (data.username != username || data.timestamp != userLastGameTimestamp)){
           setLeaderboard(data.leaderboard);
         }
 
         // If the user's high scores were updated
-        else if (data.eventType == "user-hs-update" && data.username == username && data.timestamp != userLastGameTimestamp){
+        else if (data?.eventType == "user-hs-update" && data.username == username && data.timestamp != userLastGameTimestamp){
           setUserHighScores(data.userHighScores);
         }
       }

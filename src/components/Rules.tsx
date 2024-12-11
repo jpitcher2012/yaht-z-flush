@@ -11,12 +11,16 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
   {
     showRules,
     clickBackIcon
-  }
+  },
+  context
 ) => {
+
+  const postWidth = Number(context.dimensions?.width);
+  const pagePadding = postWidth < 500 ? "medium" : "large";
   
   let [pageSelected, setPageSelected] = useState(1);
 
-  let leftCategories = [
+  const leftCategories = [
     { index: 0, name: "Ones" },
     { index: 1, name: "Twos" },
     { index: 2, name: "Threes" },
@@ -24,6 +28,7 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
     { index: 4, name: "Fives" },
     { index: 5, name: "Sixes" }
   ]
+
 
   if(!showRules){
     return(
@@ -45,8 +50,8 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
           clickIcon={() => {clickBackIcon(); setPageSelected(1)}}
         />
 
-        <vstack grow padding="large" alignment="center middle">
-          <vstack width="100%" height="100%" padding="large" gap="medium" cornerRadius="small" backgroundColor={Colors.whiteAlt}>
+        <vstack grow alignment="center middle" padding={pagePadding}>
+          <vstack width="100%" height="100%" cornerRadius="small" gap="medium" padding={pagePadding} backgroundColor={Colors.whiteAlt}>
             <text weight="bold" style="heading">
               Overview
             </text>
@@ -85,41 +90,44 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
           clickIcon={() => {clickBackIcon(); setPageSelected(1)}}
         />
 
-        <vstack grow padding="large" alignment="center middle">
-          <vstack width="100%" height="100%" padding="large" gap="medium" cornerRadius="small" backgroundColor={Colors.whiteAlt}>
+        <vstack grow alignment="center middle" padding={pagePadding}>
+          <vstack width="100%" height="100%" cornerRadius="small" gap="medium" padding={pagePadding} backgroundColor={Colors.whiteAlt}>
             <text weight="bold" style="heading">
               Scoring - Left Side
             </text>
 
             <vstack width="100%" alignment="center middle">
-              <vstack width="100%" borderColor={Colors.blackAlt}>
+              <vstack width="100%" maxWidth="325px" borderColor={Colors.blackAlt}>
 
                 {leftCategories.map((category: any) => (
                   <hstack height="30px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={category.index % 2 == 1 ? Colors.whiteAlt : Colors.lightGray}>
-                    <vstack width="27%" padding="small">
+                    <vstack width="100px"padding="small">
                       <text size="medium" color={Colors.blackAlt}>
                         {category.name}
                       </text>
                     </vstack>
                     <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                    <vstack width="73%" padding="small">
+                    <vstack grow padding="small">
                       <text size="medium" color={Colors.blackAlt}>
-                          Sum of all {category.name}
+                          Score: Sum of all {category.name}
                       </text>
                     </vstack>
                   </hstack>
                 ))}
 
-                <hstack height="30px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
-                  <vstack width="27%" padding="small">
+                <hstack grow height="45px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
+                  <vstack width="100px"padding="small">
                     <text size="medium" color={Colors.blackAlt}>
                       Bonus
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" padding="small">
+                  <vstack grow padding="small" alignment="start middle">
                     <text size="medium" color={Colors.blackAlt}>
-                      35 pts - If sum of above scores is 63+
+                      If sum of above scores is 63+
+                    </text>
+                    <text size="medium" color={Colors.blackAlt}>
+                      Score: 35 pts
                     </text>
                   </vstack>
                 </hstack>
@@ -150,38 +158,38 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
           clickIcon={() => {clickBackIcon(); setPageSelected(1)}}
         />
 
-        <vstack grow padding="large" alignment="center middle">
-          <vstack width="100%" height="100%" padding="large" gap="medium" cornerRadius="small" backgroundColor={Colors.whiteAlt}>
+        <vstack grow alignment="center middle" padding={pagePadding}>
+          <vstack width="100%" height="100%" cornerRadius="small" gap="medium" padding={pagePadding} backgroundColor={Colors.whiteAlt}>
             <text weight="bold" style="heading">
               Scoring - Right Side
             </text>
 
             <vstack width="100%" alignment="center middle">
-              <vstack width="100%" borderColor={Colors.blackAlt}>
+              <vstack width="100%" maxWidth="325px" borderColor={Colors.blackAlt}>
 
                 <hstack height="30px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
-                  <vstack width="27%" padding="small">
+                  <vstack width="100px" padding="small">
                     <text size="medium" color={Colors.blackAlt}>
                       Chance
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" padding="small">
+                  <vstack grow padding="small">
                     <text size="medium" color={Colors.blackAlt}>
                       Score: Sum of all dice
                     </text>
                   </vstack>
                 </hstack>
                 <hstack height="45px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.whiteAlt}>
-                  <vstack width="27%" padding="small">
+                  <vstack width="100px" padding="small">
                     <text size="medium" color={Colors.blackAlt}>
                       Full House
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" height="100%" padding="small" alignment="start middle">
+                  <vstack grow padding="small" alignment="start middle">
                     <text size="medium" color={Colors.blackAlt}>
-                      3 of one number and 2 of another *
+                      3 of a kind + 2 of a kind *
                     </text>
                     <text size="medium" color={Colors.blackAlt}>
                       Score: 25 pts
@@ -189,7 +197,7 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
                   </vstack>
                 </hstack>
                 <hstack height="45px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
-                  <vstack width="27%" padding="small">
+                  <vstack width="100px" padding="small" alignment="start middle">
                     <text size="medium" color={Colors.blackAlt}>
                       Sm Straight
                     </text>
@@ -198,9 +206,9 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" height="100%" padding="small" alignment="start middle">
-                  <text size="medium" alignment="start middle" color={Colors.blackAlt}>
-                      4 | 5 numbers in a row (ex: 2-3-4-5) *
+                  <vstack grow padding="small" alignment="start middle">
+                    <text size="medium" alignment="start middle" color={Colors.blackAlt}>
+                      4+ | 5 numbers in sequence *
                     </text>
                     <text size="medium" color={Colors.blackAlt}>
                       Score: 30 pts | 40 pts
@@ -208,7 +216,7 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
                   </vstack>
                 </hstack>
                 <hstack height="45px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.whiteAlt}>
-                  <vstack width="27%" padding="small">
+                  <vstack width="100px" padding="small" alignment="start middle">
                     <text size="medium" color={Colors.blackAlt}>
                       3 of a Kind
                     </text>
@@ -217,28 +225,31 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" height="100%" padding="small" alignment="start middle">
-                    <text size="medium" color={Colors.blackAlt}>
-                      Sum of all dice
-                    </text>
+                  <vstack grow padding="small" alignment="start middle">
                     <text size="medium" alignment="start middle" color={Colors.blackAlt}>
-                      At least 3 | 4 of the same number
+                      3+ | 4+ of the same number
+                    </text>
+                    <text size="medium" color={Colors.blackAlt}>
+                      Score: Sum of all dice
                     </text>
                   </vstack>
                 </hstack>
-                <hstack height="45px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
-                  <vstack width="27%" padding="small">
+                <hstack height="60px" alignment="center middle" borderColor={Colors.blackAlt} backgroundColor={Colors.lightGray}>
+                  <vstack width="100px"minWidth="100px" padding="small">
                     <text size="medium" color={Colors.blackAlt}>
                       Yaht-Z
                     </text>
                   </vstack>
                   <vstack height="100%" width="2px" backgroundColor={Colors.blackAlt}/>
-                  <vstack width="73%" height="100%" padding="small" alignment="start middle">
+                  <vstack grow padding="small" alignment="start middle">
                     <text size="medium" alignment="start middle" color={Colors.blackAlt}>
                       5 of the same number
                     </text>
                     <text size="medium" color={Colors.blackAlt}>
-                      Score: 50 pts + 100 for each additional
+                      Score: 50 pts
+                    </text>
+                    <text size="medium" color={Colors.blackAlt}>
+                      Bonus: 100 pts per additional
                     </text>
                   </vstack>
                 </hstack>
@@ -273,8 +284,8 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
           clickIcon={() => {clickBackIcon(); setPageSelected(1)}}
         />
 
-        <vstack grow padding="large" alignment="center middle">
-          <vstack width="100%" height="100%" padding="large" gap="medium" cornerRadius="small" backgroundColor={Colors.whiteAlt}>
+        <vstack grow alignment="center middle" padding={pagePadding}>
+          <vstack width="100%" height="100%" cornerRadius="small" gap="medium" padding={pagePadding} backgroundColor={Colors.whiteAlt}>
             <text weight="bold" style="heading">
               Tracking & Sharing Scores
             </text>
