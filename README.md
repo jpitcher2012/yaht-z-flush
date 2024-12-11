@@ -4,15 +4,12 @@
 A new twist on the classic dice game! The dice now have each number in 2 possible colors.\
 When all 5 dice are the same color, you have rolled a FLUSH and scores for that round are doubled!
 
-For each round, you can roll the dice up to 3 times. Click any dice to select them and prevent them from being rolled. Click again to deselect.\
-When you are ready to submit your score for the round, click the desired category in the scorecard and press PLAY.
+For each round, you can roll the dice up to 3 times. Click any dice to select them and prevent them from being rolled.\
+Click again to deselect. When you are ready to submit your score for the round, click the desired category in the scorecard and press PLAY.
 
-## Scoring
-Scoring is divided into 2 distinct sections - the left side and right side.
+## Scoring - Left Side
 
-The left side is scored as follows:
-
-<table border="1" style="margin-left:50px; margin-bottom:30px">
+<table border="1">
     <tr>
         <td>Ones</td>
         <td>Sum of all Ones</td>
@@ -44,9 +41,9 @@ The left side is scored as follows:
 </table>
 
 
-The right side is scored as follows:
+## Scoring - Right Side
 
-<table border="1" style="margin-left:50px; margin-bottom:20px">
+<table border="1">
     <tr>
         <td>Chance</td>
         <td>Sum of all dice</td>
@@ -77,14 +74,9 @@ The right side is scored as follows:
     </tr>
 </table>
 
-<p style="margin-left: 50px">
-* If you roll a Yaht-Z and that category is unavailable, you can count it as a Full House, Sm Straight, or Lg Straight
-<br/><br/>
-** If you roll a Yaht-Z and have already entered a non-zero score for that category,  you get an additional Yaht-Z bonus of 100 points.
-<br/>
-&nbsp;&nbsp;&nbsp;
-If it's also a flush, the bonus is worth 200 points! This Yaht-Z bonus can be earned multiple times, for each additional Yaht-Z.
-</p>
+\* If you roll a Yaht-Z and that category is unavailable, you can count it as a Full House, Sm Straight, or Lg Straight
+
+\*\* If you roll a Yaht-Z and have already entered a non-zero score for that category,  you get an additional Yaht-Z bonus of 100 points. If it's also a flush, the bonus is worth 200 points! This Yaht-Z bonus can be earned multiple times, for each additional Yaht-Z.
 
 ## Tracking & Sharing Scores
 If you are logged into Reddit, you can view your top 10 scores on the High Scores page. These scores are synced across all Yaht-Z Flush instances.
