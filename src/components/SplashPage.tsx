@@ -12,7 +12,8 @@ export const SplashPage: Devvit.BlockComponent<SplashPageProps> = (
     showSplashPage,
     clickNewGame,
     clickShowRules
-  }
+  },
+  context
 ) => {
 
   if(!showSplashPage){
@@ -21,28 +22,33 @@ export const SplashPage: Devvit.BlockComponent<SplashPageProps> = (
     );
   }
 
+  const postWidth = Number(context.dimensions?.width);
+  const imgWidth = postWidth < 500 ? "250px" : "400px";
+  const imgHeight = postWidth < 500 ? "172px" : "275px";
+
   return(
-    <vstack width="100%" height="100%" padding="large" alignment="center top" backgroundColor={Colors.blue}>
+    <vstack width="100%" height="100%" padding="large" alignment="center middle" backgroundColor={Colors.blue}>
       <vstack width="100%" height="100%" padding="small" gap="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.whiteAlt}>
         
         <vstack width="100%" padding="small" alignment="center middle">
-          <image imageWidth="400px" imageHeight="275px" url="splash-page.png"/>
+          <image imageWidth={imgWidth} imageHeight={imgHeight} url="splash-page.png"/>
         </vstack>
 
-        <vstack grow padding="medium" gap="medium" alignment="center top">
-          <vstack width="120px" padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.blue} onPress={clickShowRules}>
-            <text size="xlarge" weight="bold" style="heading" color={Colors.whiteAlt}>
-                How to Play
-              </text>
-            </vstack>
+        <spacer width="100%" height={postWidth < 500 ? "10px" : "0px"}/>
 
-            <vstack width="120px" padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.red} onPress={clickNewGame}>
-              <text size="xlarge" weight="bold" style="heading" color={Colors.whiteAlt}>
-                New Game
-              </text>
-            </vstack>
-          
+        <vstack padding="medium" gap="medium" alignment="center top">
+          <vstack width="130px" padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.blue} onPress={clickNewGame}>
+            <text size="xlarge" weight="bold" style="heading" color={Colors.whiteAlt}>
+              New Game
+            </text>
           </vstack>
+
+          <vstack width="130px" padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.red} onPress={clickShowRules}>
+            <text size="xlarge" weight="bold" style="heading" color={Colors.whiteAlt}>
+              How to Play
+            </text>
+          </vstack>
+        </vstack>
       </vstack>
     </vstack>
   )}

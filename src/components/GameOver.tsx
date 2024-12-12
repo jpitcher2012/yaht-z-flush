@@ -26,22 +26,25 @@ export const GameOver: Devvit.BlockComponent<GameOverProps> = (
 ) => {
 
   if(showGameOver){
+
+    const imgHeight = (img == "game_over.png") ? "165px" : "200px";
+    const imgWidth = (img == "game_over.png") ? "186px" : "225px";
+
     return(
       <zstack width="100%" height="100%" alignment="center middle">
 
         <vstack width="100%" height="100%" backgroundColor={Colors.disabled}/>
 
-        <vstack cornerRadius="small" border="thick" backgroundColor={Colors.whiteAlt} borderColor={Colors.gray}>
+        <vstack width={imgWidth} cornerRadius="small" border="thick" alignment="center middle" backgroundColor={Colors.whiteAlt} borderColor={Colors.gray}>
           
-          <vstack width="100%">
-            <zstack width="225px" height="198px">
+          <vstack width={imgWidth}>
+            <zstack width={imgWidth} height={imgHeight}>
 
-              <vstack width="100%" height="100%" padding="small" alignment="center middle">
-                <image imageWidth="225px" imageHeight="198px" url={img}/>
+              <vstack width={imgWidth} height={imgHeight} alignment="center middle">
+                <image imageWidth={imgWidth} imageHeight={imgHeight} width="100%" url={img}/>
               </vstack>
 
-              <vstack width="225px" height="198px" padding="small" alignment="center middle">
-                <spacer width="100%" height="0px"/>
+              <vstack width={imgWidth} height={imgHeight} alignment="center middle">
                 <text size="xxlarge" weight="bold" style="heading" color={Colors.blackAlt}>
                   {score}
                 </text>
