@@ -150,7 +150,7 @@ Devvit.addCustomPostType({
 
         // If there is a new leader - add a comment to the post
         if(score > leaderboard[0].score){
-          const prevLeader = leaderboard[0].user;
+          const prevLeader = leaderboard[0].username;
           if(prevLeader != username){
             _context.reddit.submitComment({
               id: `${_context.postId}`,
