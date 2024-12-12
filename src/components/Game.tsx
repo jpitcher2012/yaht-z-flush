@@ -16,6 +16,7 @@ import { DieData, createDie, clearDie, rollDie } from '../data/dieData.js';
 import { HighScoreData } from '../data/highScoreData.js';
 import { Colors } from '../constants/colors.js';
 import moment from 'moment';
+import { SplashPage } from './SplashPage.js';
 
 export interface Game {
   username: string,
@@ -47,6 +48,7 @@ export const Game: Devvit.BlockComponent<Game> = (
   let [gameOverImg, setGameOverImg] = useState("game_over.png");
   let [gameTimestamp, setGameTimestamp] = useState(0);
   let [commentUrl, setCommentUrl] = useState('');
+  let [showSplashPage, setShowSplashPage] = useState(true);
   let [showMenu, setShowMenu] = useState(false);
   let [showGameOver, setShowGameOver] = useState(false);
   let [showNewGameModal, setShowNewGameModal] = useState(false);
@@ -111,6 +113,7 @@ export const Game: Devvit.BlockComponent<Game> = (
   }
 
   function startNewGame() {
+    setShowSplashPage(false);
     setScorecard(jsonify(createScorecard()));
     setRoundsLeft(13);
     setRollsLeft(3);
@@ -369,6 +372,12 @@ export const Game: Devvit.BlockComponent<Game> = (
           clickClose={() => {setShowCommentModal(false); setShowGameOver(true)}}
         />
 
+        <SplashPage
+          showSplashPage={showSplashPage}
+          clickNewGame={startNewGame}
+          clickShowRules={() => setShowRules(true)}
+        />
+
         <Rules
           showRules={showRules}
           clickBackIcon={clickBackIcon}
@@ -388,7 +397,7 @@ export const Game: Devvit.BlockComponent<Game> = (
           username={username}
           clickBackIcon={clickBackIcon}
         />
-            
+
       </zstack>
     </vstack>
   );

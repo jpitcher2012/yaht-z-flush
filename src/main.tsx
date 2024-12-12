@@ -144,11 +144,21 @@ Devvit.addCustomPostType({
         });
       }
 
-      const prevLeader = leaderboard[0]?.user;
-
       // If the score is in the top 10 of the leaderboard, update the leaderboard
       if(leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score){
         leaderboard.push(scoreData);
+
+        // If there is a new leader - add a comment to the post
+        if(score > leaderboard[0].score){
+          const prevLeader = leaderboard[0].user;
+          if(prevLeader != username){
+            _context.reddit.submitComment({
+              id: `${_context.postId}`,
+              text: `New Yaht-Z Flush leader! u/${username} passed u/${prevLeader}, with a score of ${score}!`
+             });
+          }
+        }
+
         sortScores(leaderboard);
 
         // If the user is in the leaderboard multiple times, only keep the top score
@@ -177,16 +187,6 @@ Devvit.addCustomPostType({
           username: username,
           timestamp: timestamp,
           leaderboard: leaderboard
-        });
-      }
-
-      const newLeader = leaderboard[0].user;
-
-      // If there is a new leader - add a comment to the post
-      if(prevLeader && prevLeader != newLeader){
-        _context.reddit.submitComment({
-         id: `${_context.postId}`,
-         text: `New Yaht-Z Flush leader! u/${newLeader} passed u/${prevLeader}, with a score of ${score}!`
         });
       }
 

@@ -71,7 +71,7 @@ export const Leaderboard: Devvit.BlockComponent<LeaderboardProps> = (
                 User
               </text>
             </vstack>
-            <vstack width="60px" padding="small" alignment="center middle" borderColor={Colors.blackAlt}>
+            <vstack width="65px" padding="small" alignment="center middle" borderColor={Colors.blackAlt}>
               <text size="large" color={Colors.blackAlt}>
                 Score
               </text>
@@ -95,7 +95,7 @@ export const Leaderboard: Devvit.BlockComponent<LeaderboardProps> = (
                   {l.username}
                 </text>
               </vstack>
-              <vstack width="60px" padding="small" alignment="center middle" borderColor={Colors.blackAlt}>
+              <vstack width="65px" padding="small" alignment="center middle" borderColor={Colors.blackAlt}>
                 <text size="large" color={l.username == username ? Colors.whiteAlt : Colors.blackAlt}>
                   {l.score}
                 </text>

@@ -31,22 +31,13 @@ export const GameOver: Devvit.BlockComponent<GameOverProps> = (
 
         <vstack width="100%" height="100%" backgroundColor={Colors.disabled}/>
 
-        <vstack 
-          cornerRadius="small"
-          backgroundColor={Colors.whiteAlt}
-          borderColor={Colors.gray}
-          border="thick"
-        >
+        <vstack cornerRadius="small" border="thick" backgroundColor={Colors.whiteAlt} borderColor={Colors.gray}>
           
           <vstack width="100%">
             <zstack width="225px" height="198px">
 
               <vstack width="100%" height="100%" padding="small" alignment="center middle">
-                <image
-                  url={img}
-                  imageWidth="225px"
-                  imageHeight="198px"
-                />
+                <image imageWidth="225px" imageHeight="198px" url={img}/>
               </vstack>
 
               <vstack width="225px" height="198px" padding="small" alignment="center middle">
@@ -62,13 +53,7 @@ export const GameOver: Devvit.BlockComponent<GameOverProps> = (
             </zstack>
 
             <hstack width="100%" alignment="center middle">
-              <vstack 
-                backgroundColor={Colors.red}
-                padding="small"
-                cornerRadius="small"
-                alignment="center middle"
-                onPress={startNewGame}
-              >
+              <vstack padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.red} onPress={startNewGame}>
                 <text size="xlarge" weight="bold" style="heading" color={Colors.whiteAlt}>
                   New Game
                 </text>
@@ -76,32 +61,15 @@ export const GameOver: Devvit.BlockComponent<GameOverProps> = (
             </hstack>
 
             <hstack width="100%" alignment="center middle" padding="medium" gap="small">
-            <vstack 
-                backgroundColor={Colors.blue}
-                padding="small"
-                cornerRadius="small"
-                alignment="center middle"
-                onPress={clickShowHighScores}
-              >
+              <vstack padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.blue} onPress={clickShowHighScores}>
                 <icon size="medium" name="statistics" color={Colors.whiteAlt} />
               </vstack>
 
-              <vstack 
-                backgroundColor={Colors.blue}
-                padding="small"
-                cornerRadius="small"
-                alignment="center middle"
-                onPress={clickShowLeaderboard}
-              >
+              <vstack padding="small" cornerRadius="small" alignment="center middle" backgroundColor={Colors.blue}onPress={clickShowLeaderboard}>
                 <icon size="medium" name="contest" color={Colors.whiteAlt} />
               </vstack>
 
-              <vstack backgroundColor={Colors.blue}
-                padding="small"
-                cornerRadius="small"
-                alignment="center middle"
-                onPress={clickShareScore}
-              >
+              <vstack padding="small" cornerRadius="small" alignment="center middle"backgroundColor={Colors.blue} onPress={clickShareScore}>
                 <icon size="medium" name="share-new" color={Colors.whiteAlt} />
               </vstack>
             </hstack>
