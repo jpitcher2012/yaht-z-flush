@@ -1,4 +1,4 @@
-import { Devvit, useState } from '@devvit/public-api';
+import { Devvit, useState, useAsync } from '@devvit/public-api';
 import { Header } from './Header.js';
 import { Scorecard } from './Scorecard.js';
 import { Die } from './Die.js';
@@ -42,6 +42,7 @@ export const Game: Devvit.BlockComponent<Game> = (
   const postWidth = Number(context.dimensions?.width);
   const cornerRadius = postWidth < 500 ? "none" : "medium";
 
+  const [rolling, setRolling] = useState(false);
   let [rollsLeft, setRollsLeft] = useState(3);
   let [roundsLeft, setRoundsLeft] = useState(13);
   let [categorySelected, setCategorySelected] = useState(false);
@@ -70,6 +71,33 @@ export const Game: Devvit.BlockComponent<Game> = (
     return jsonify(diceArr);
   });
 
+  // Used to update the dice asynchronously while rolling
+  useAsync(
+    async () => {
+      if(rolling){
+        dice.forEach((die: DieData) => {
+          if(!die.selected){
+            die = rollDie(die);
+          }
+        });
+      }
+      return dice;
+    },
+    {
+      depends: [rolling],
+      finally: async (data: Array<DieData>) => {
+        if(rolling){
+          setRolling(false);
+          setDice(data);
+          scorecard = calculateScores(scorecard, dice);
+          rollsLeft--;
+          setRollsLeft(rollsLeft);
+          setScorecard(scorecard);
+        }
+      },
+    }
+  );
+
   function roll(){
     setShowMenu(false);
 
@@ -77,20 +105,17 @@ export const Game: Devvit.BlockComponent<Game> = (
       return;
     }
 
-    // Roll the unselected dice
+    // Clear the unselected dice before rolling
     dice.forEach((die: DieData) => {
       if(!die.selected){
-        die = rollDie(die);
+        die.value = 0;
+        die.color = "white";
       }
     });
-
-    // Score the categories
-    scorecard = calculateScores(scorecard, dice);
-
-    rollsLeft--;
     setDice(dice);
-    setRollsLeft(rollsLeft);
-    setScorecard(scorecard);
+
+    // Roll the dice asynchronously
+    setRolling(true);
   }
 
   function clickMenuIcon() {
