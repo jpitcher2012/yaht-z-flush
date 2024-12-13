@@ -3,12 +3,14 @@ import { RollsLeftIcon } from './RollsLeftIcon.js';
 import { Colors } from '../constants/colors.js';
 
 interface RollButtonProps {
+  canClick: boolean;
   rollsLeft: number;
   roll: () => void;
 }
 
 export const RollButton: Devvit.BlockComponent<RollButtonProps> = (
   {
+    canClick,
     rollsLeft,
     roll
   }
@@ -46,7 +48,7 @@ export const RollButton: Devvit.BlockComponent<RollButtonProps> = (
           height="48px"
           padding="small"
           cornerRadius="small"
-          onPress={rollsLeft > 0 ? () => roll() : undefined}
+          onPress={canClick ? () => roll() : undefined}
         />
       </zstack>
     </vstack>

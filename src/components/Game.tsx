@@ -342,6 +342,7 @@ export const Game: Devvit.BlockComponent<Game> = (
           </hstack>
           <hstack gap="medium" width="90%" alignment="center middle">
             <RollButton
+              canClick={!rolling && rollsLeft > 0 && roundsLeft > 0}
               rollsLeft={rollsLeft}
               roll={roll}
             />
