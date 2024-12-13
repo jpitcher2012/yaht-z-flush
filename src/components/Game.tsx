@@ -85,11 +85,11 @@ export const Game: Devvit.BlockComponent<Game> = (
     },
     {
       depends: [rolling],
-      finally: async (data: Array<DieData>) => {
+      finally: async (updatedDice: Array<DieData>) => {
         if(rolling){
           setRolling(false);
-          setDice(data);
-          scorecard = calculateScores(scorecard, dice);
+          setDice(updatedDice);
+          scorecard = calculateScores(scorecard, updatedDice);
           rollsLeft--;
           setRollsLeft(rollsLeft);
           setScorecard(scorecard);
