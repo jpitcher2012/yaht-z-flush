@@ -89,6 +89,9 @@ Devvit.addCustomPostType({
     });
 
     const [isModerator] = useState(async () => {
+      if(!username){
+        return false;
+      }
       const mods = await _context.reddit.getModerators({
         subredditName: subreddit,  
         username: username
