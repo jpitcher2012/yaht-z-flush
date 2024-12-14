@@ -36,6 +36,6 @@ Click again to deselect. When you are ready to submit your score for the round, 
 ## Tracking & Sharing Scores
 If you are logged into Reddit (not browsing anonymously), you can view your top 10 scores on the High Scores page. These scores are synced across any Yaht-Z Flush instances posted within the same community.
 
-Logged-in users are also eligible for the Leaderboard, which displays the top 10 users with the highest scores for this specific Yaht-Z Flush post. 
+Logged-in users are also eligible for the Leaderboard, which displays the top 10 users with the highest scores for this specific Yaht-Z Flush post. Mods have the ability to mark a game as completed, which locks the leaderboard.
 
 After completing a game, you can share your score as a comment on the post. This is available for anyone but will only include your username if you are logged in.

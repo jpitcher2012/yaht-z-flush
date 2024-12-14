@@ -7,6 +7,7 @@ interface LeaderboardProps {
   showLeaderboard: boolean;
   leaderboard: Array<HighScoreData>;
   username: string;
+  gameIsActive: boolean;
   clickBackIcon: () => void;
 }
 
@@ -15,6 +16,7 @@ export const Leaderboard: Devvit.BlockComponent<LeaderboardProps> = (
     showLeaderboard,
     leaderboard,
     username,
+    gameIsActive,
     clickBackIcon
   },
   context
@@ -49,11 +51,13 @@ export const Leaderboard: Devvit.BlockComponent<LeaderboardProps> = (
     )
   }
 
+  const headerText = `Leaderboard (${gameIsActive ? "Active" : "Final"})`;
+
   return(
     <vstack width="100%" height="100%" backgroundColor={Colors.blue}>
       <Header
         mainPage={false}
-        headerText="Leaderboard"
+        headerText={headerText}
         clickIcon={clickBackIcon}
       />
 

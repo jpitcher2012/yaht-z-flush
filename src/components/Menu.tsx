@@ -3,21 +3,25 @@ import { Colors } from '../constants/colors.js';
 
 interface MenuProps {
   showMenu: boolean;
+  userIsModerator: boolean;
   clickMenuIcon: () => void;
   clickNewGame: () => void;
   clickShowRules: () => void;
   clickShowHighScores: () => void;
   clickShowLeaderboard: () => void;
+  clickChangeGameState: () => void;
 }
 
 export const Menu: Devvit.BlockComponent<MenuProps> = (
   {
     showMenu,
+    userIsModerator,
     clickMenuIcon,
     clickNewGame,
     clickShowRules,
     clickShowHighScores,
-    clickShowLeaderboard
+    clickShowLeaderboard,
+    clickChangeGameState
   }
 ) => {
 
@@ -35,7 +39,7 @@ export const Menu: Devvit.BlockComponent<MenuProps> = (
         </vstack>
 
         <vstack
-          width="175px"
+          width={userIsModerator ? "220px" : "175px"}
           backgroundColor={Colors.darkBlue}
           alignment="start top"
           padding="medium"
@@ -65,6 +69,14 @@ export const Menu: Devvit.BlockComponent<MenuProps> = (
               Leaderboard
             </text>
           </hstack>
+          {userIsModerator && 
+            <hstack gap="medium" alignment="start middle" onPress={clickChangeGameState}>
+              <icon size="medium" name="mod" color={Colors.whiteAlt} />
+              <text size="large" weight="bold" style="heading" color={Colors.whiteAlt}>
+                Change Game State
+              </text>
+            </hstack>
+          }
         </vstack>
       </vstack>
 

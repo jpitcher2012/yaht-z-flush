@@ -305,7 +305,8 @@ export const Rules: Devvit.BlockComponent<RulesProps> = (
                 These scores are synced across any Yaht-Z Flush instances posted within the same community.
               </text>
               <text wrap color={Colors.blackAlt}>
-                Logged-in users are also eligible for the Leaderboard, which displays the top 10 users with the highest scores for this specific Yaht-Z Flush post. 
+                Logged-in users are also eligible for the Leaderboard, which displays the top 10 users with the highest scores for this specific Yaht-Z Flush post.
+                Mods have the ability to mark a game as completed, which locks the leaderboard.
               </text>
               <text wrap color={Colors.blackAlt}>
                 After completing a game, you can share your score as a comment on the post. 

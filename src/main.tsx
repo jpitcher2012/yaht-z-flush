@@ -16,8 +16,11 @@ Devvit.addMenuItem({
   onPress: async (_event, context) => {
     const { reddit, ui } = context;
     const subreddit = await reddit.getCurrentSubreddit();
-    await reddit.submitPost({
-      title: 'Yaht-Z Flush',
+    const lastGameNumber = await context.redis.get("last_game_number");
+    const gameNumber = lastGameNumber ? Number(lastGameNumber) + 1 : 1;
+
+    const post = await reddit.submitPost({
+      title: `Yaht-Z Flush - Game #${gameNumber}`,
       subredditName: subreddit.name,
       // The preview appears while the post loads
       preview: (
@@ -26,7 +29,17 @@ Devvit.addMenuItem({
         </vstack>
       ),
     });
-    ui.showToast({ text: 'Added Yaht-Z Flush!' });
+    ui.showToast({ text: `Added Yaht-Z Flush - Game #${gameNumber}!` });
+
+    context.redis.set("last_game_number", String(gameNumber));
+    context.redis.set(`game_number_${post.id}`, String(gameNumber));
+    context.redis.set(`game_active_${post.id}`, "true");
+
+    reddit.setPostFlair({
+      subredditName: subreddit.name,
+      postId: post.id,
+      text: "Active Game"
+    })
   },
 });
 
@@ -50,16 +63,34 @@ Devvit.addCustomPostType({
         else if (data?.eventType == "user-hs-update" && data.username == username && data.timestamp != userLastGameTimestamp){
           setUserHighScores(data.userHighScores);
         }
+
+        // If the game state changed (completed/active)
+        else if (data?.eventType == "game-state-update" && data.postId == _context.postId){
+          setGameIsActive(data.isActive);
+        }
       }
     });
     channel.subscribe();
 
     const [userLastGameTimestamp, setUserLastGameTimestamp] = useState(0);
 
+    const [subreddit] = useState(async () => {
+      const subreddit = await _context.reddit.getCurrentSubreddit();
+      return subreddit?.name ?? '';
+    });
+
     const [username] = useState(async () => {
       const currUser = await _context.reddit.getCurrentUser();
       return currUser?.username ?? '';
     });
+
+    const [isModerator] = useState(async () => {
+      const mods = await _context.reddit.getModerators({
+        subredditName: subreddit,  
+        username: username
+      }).all();
+      return mods.length > 0;
+    })
 
     const [userHighScores, setUserHighScores] = useState(async () => {
       let highScoresString = await _context.redis.get(`high_scores_${username}`);
@@ -83,6 +114,16 @@ Devvit.addCustomPostType({
       }
 
       return leaderboardString ? JSON.parse(leaderboardString) : [];
+    });
+
+    let [gameIsActive, setGameIsActive] = useState(async () => {
+      let gameActive = await _context.redis.get(`game_active_${_context.postId}`);
+      return gameActive == "false" ? false : true;
+    });
+
+    let [gameNumber] = useState(async () => {
+      let gameNumber = await _context.redis.get(`game_number_${_context.postId}`);
+      return gameNumber ? gameNumber : "";
     });
 
     function sortScores(scores: Array<HighScoreData>){
@@ -145,7 +186,7 @@ Devvit.addCustomPostType({
       }
 
       // If the score is in the top 10 of the leaderboard, update the leaderboard
-      if(leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score){
+      if(gameIsActive && (leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score)){
         leaderboard.push(scoreData);
 
         // If there is a new leader - add a comment to the post
@@ -193,14 +234,67 @@ Devvit.addCustomPostType({
       return gameOverImg;
     }
 
+    function updateActiveState(isActive: boolean){
+      setGameIsActive(isActive);
+
+      if(_context.postId){
+
+        _context.redis.set(`game_active_${_context.postId}`, String(isActive));
+
+        channel.send({
+          eventType: "game-state-update",
+          postId: _context.postId,
+          isActive: isActive
+        });
+      
+        const flairText = isActive ? "Active Game" : "Completed Game";
+    
+        _context.reddit.setPostFlair({
+          subredditName: subreddit,
+          postId: _context.postId,
+          text: flairText
+        });
+
+        // If the game has been completed, find the winner
+        if(!isActive){
+
+          let commentText = `Yaht-Z Flush Game${gameNumber ? " #" + gameNumber : ""} is over!`;
+
+          if(leaderboard.length > 0){
+            commentText = commentText + ` The winner is u/${[leaderboard[0].username]}, with a score of ${leaderboard[0].score}!`;
+          }
+
+          _context.reddit.submitComment({
+            id: `${_context.postId}`,
+            text: commentText
+           });
+           
+          _context.reddit.setUserFlair({
+            subredditName: subreddit,
+            username: leaderboard[0].username,
+            text: "Champion!"
+          })
+        }
+        else{
+          _context.reddit.submitComment({
+            id: `${_context.postId}`,
+            text: "False alarm! The game is still on!"
+          });
+        }
+      }
+    }
+
     return (
       <blocks height="tall">
         <vstack height="100%" width="100%" alignment="center top">
           <Game
+            gameIsActive={gameIsActive}
+            userIsModerator={isModerator}
             username={username}
             userHighScores={userHighScores}
             leaderboard={leaderboard}
             updateScores={updateScores}
+            updateActiveState={updateActiveState}
            />
         </vstack>
       </blocks>

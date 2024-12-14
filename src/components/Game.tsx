@@ -19,10 +19,13 @@ import moment from 'moment';
 import { SplashPage } from './SplashPage.js';
 
 export interface Game {
+  gameIsActive: boolean,
+  userIsModerator: boolean,
   username: string,
   userHighScores: Array<HighScoreData>,
   leaderboard: Array<HighScoreData>,
-  updateScores: (score: number, timestamp: EpochTimeStamp) => string
+  updateScores: (score: number, timestamp: EpochTimeStamp) => string,
+  updateActiveState: (state: boolean) => void
 }
 
 function jsonify(data: any){
@@ -31,10 +34,13 @@ function jsonify(data: any){
 
 export const Game: Devvit.BlockComponent<Game> = (
   {
+    gameIsActive,
+    userIsModerator,
     username,
     userHighScores,
     leaderboard,
-    updateScores
+    updateScores,
+    updateActiveState
   },
   context
 ) => {
@@ -48,16 +54,19 @@ export const Game: Devvit.BlockComponent<Game> = (
   let [categorySelected, setCategorySelected] = useState(false);
   let [gameOverImg, setGameOverImg] = useState("game_over.png");
   let [gameTimestamp, setGameTimestamp] = useState(0);
-  let [commentUrl, setCommentUrl] = useState('');
   let [showSplashPage, setShowSplashPage] = useState(true);
   let [showMenu, setShowMenu] = useState(false);
   let [showGameOver, setShowGameOver] = useState(false);
   let [showNewGameModal, setShowNewGameModal] = useState(false);
   let [showShareScoreModal, setShowShareScoreModal] = useState(false);
   let [showCommentModal, setShowCommentModal] = useState(false);
+  let [showChangeStateModal, setShowChangeStateModal] = useState(false);
+  let [showStateChangedModal, setShowStateChangedModal] = useState(false);
   let [showRules, setShowRules] = useState(false);
   let [showHighScores, setShowHighScores] = useState(false);
   let [showLeaderboard, setShowLeaderboard] = useState(false);
+  let [showInactiveGameWarning, setShowInactiveGameWarning] = useState(false);
+
 
   let [scorecard, setScorecard] = useState(() => {
     return jsonify(createScorecard());
@@ -139,6 +148,7 @@ export const Game: Devvit.BlockComponent<Game> = (
 
   function startNewGame() {
     setShowSplashPage(false);
+
     setScorecard(jsonify(createScorecard()));
     setRoundsLeft(13);
     setRollsLeft(3);
@@ -288,18 +298,13 @@ export const Game: Devvit.BlockComponent<Game> = (
   async function shareScore(){
     const text = `${username ? `u/${username}` : 'An anonymous user'} scored ${scorecard.totalScore}!`;
 
-    const comment = await context.reddit.submitComment({
+    await context.reddit.submitComment({
       id: `${context.postId}`,
       text: text
     });
 
-    setCommentUrl(comment.url);
     setShowShareScoreModal(false);
     setShowCommentModal(true);
-  }
-
-  function viewComment(){
-    context.ui.navigateTo(commentUrl);
   }
 
   return (
@@ -355,11 +360,13 @@ export const Game: Devvit.BlockComponent<Game> = (
 
         <Menu
           showMenu={showMenu}
+          userIsModerator={userIsModerator}
           clickMenuIcon={clickMenuIcon}
           clickNewGame={clickNewGame}
           clickShowRules={() => setShowRules(true)}
           clickShowHighScores={() => setShowHighScores(true)}
           clickShowLeaderboard={() => setShowLeaderboard(true)}
+          clickChangeGameState={() => setShowChangeStateModal(true)}
         />
 
         <GameOver
@@ -393,15 +400,42 @@ export const Game: Devvit.BlockComponent<Game> = (
           showModal={showCommentModal}
           header="Score Shared"
           body="A comment has been added with your score!"
-          btnText="View comment"
-          clickBtn={viewComment}
+          btnText="OK"
           clickClose={() => {setShowCommentModal(false); setShowGameOver(true)}}
+        />
+
+        <InfoModal
+          showModal={showInactiveGameWarning}
+          header="Completed Game"
+          body="This game has been marked as completed. You can still play and track your high scores, but the leaderboard won't be updated."
+          btnText="OK"
+          clickClose={() => {setShowInactiveGameWarning(false)}}
         />
 
         <SplashPage
           showSplashPage={showSplashPage}
-          clickNewGame={startNewGame}
+          userIsModerator={userIsModerator}
+          clickNewGame={() => {startNewGame(); if(!gameIsActive){setShowInactiveGameWarning(true)}}}
           clickShowRules={() => setShowRules(true)}
+          clickShowHighScores={() => setShowHighScores(true)}
+          clickShowLeaderboard={() => setShowLeaderboard(true)}
+          clickChangeGameState={() => setShowChangeStateModal(true)}
+        />
+
+        <ConfirmationModal
+          showModal={showChangeStateModal}
+          header="Change Game State"
+          body={gameIsActive? "Do you want to mark this game as completed? Users can still play, but the leaderboard won't be updated." : "Do you want to make this game active again?"}
+          clickYes={() => {setShowChangeStateModal(false); updateActiveState(!gameIsActive); setShowStateChangedModal(true);}}
+          clickNo={() => setShowChangeStateModal(false)}
+        />
+
+        <InfoModal
+          showModal={showStateChangedModal}
+          header="Game State Changed"
+          body={!gameIsActive ? "The game is now completed." : "The game is now active."}
+          btnText="OK"
+          clickClose={() => {setShowStateChangedModal(false)}}
         />
 
         <Rules
@@ -421,6 +455,7 @@ export const Game: Devvit.BlockComponent<Game> = (
           showLeaderboard={showLeaderboard}
           leaderboard={leaderboard}
           username={username}
+          gameIsActive={gameIsActive}
           clickBackIcon={clickBackIcon}
         />
 
