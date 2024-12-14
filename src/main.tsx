@@ -25,7 +25,7 @@ Devvit.addMenuItem({
       // The preview appears while the post loads
       preview: (
         <vstack height="100%" width="100%" alignment="center middle">
-          <text size="large">Loading ...</text>
+          <image imageWidth="100px" imageHeight="100px" url="spinner.gif"/>
         </vstack>
       ),
     });
@@ -71,6 +71,10 @@ Devvit.addCustomPostType({
       }
     });
     channel.subscribe();
+
+    // Used while testing
+    // clearHighScores("girafferunner");
+    // clearLastGameNumber();
 
     const [userLastGameTimestamp, setUserLastGameTimestamp] = useState(0);
 
@@ -140,7 +144,7 @@ Devvit.addCustomPostType({
       });
     }
 
-    function updateScores(score: number, timestamp: EpochTimeStamp): string{
+    async function updateScores(score: number, timestamp: EpochTimeStamp): Promise<string>{
       setUserLastGameTimestamp(timestamp);
 
       let gameOverImg = "game_over.png";
@@ -157,78 +161,99 @@ Devvit.addCustomPostType({
         timestamp: timestamp
       }
 
+      let highScores = userHighScores;
+
+      // Get the latest high scores from redis in case realtime updates were missed
+      let highScoresString = await _context.redis.get(`high_scores_${username}`);
+      if(highScoresString){
+        highScores = JSON.parse(highScoresString);
+        sortScores(highScores);
+      }
+
       // If the score is in the user's top 10, update their high scores
-      if(userHighScores.length < 10 || score > userHighScores[userHighScores.length - 1].score){
-        userHighScores.push(scoreData);
-        sortScores(userHighScores);
+      if(highScores.length < 10 || score > highScores[highScores.length - 1].score){
+        highScores.push(scoreData);
+        sortScores(highScores);
 
-        if(userHighScores.length > 10){
-          userHighScores.length = 10;
+        if(highScores.length > 10){
+          highScores.length = 10;
         }
 
-        for(let i = 0; i < userHighScores.length; i++){
-          userHighScores[i].rank = i + 1;
+        for(let i = 0; i < highScores.length; i++){
+          highScores[i].rank = i + 1;
         }
 
-        if(userHighScores[0].score == score && userHighScores[0]?.timestamp == timestamp){
+        if(highScores[0].score == score && highScores[0]?.timestamp == timestamp){
           gameOverImg = "game_over_hs.png";
         }
 
-        setUserHighScores(userHighScores);
-        _context.redis.set(`high_scores_${username}`, JSON.stringify(userHighScores));
+        setUserHighScores(highScores);
+        _context.redis.set(`high_scores_${username}`, JSON.stringify(highScores));
 
         channel.send({
           eventType: "user-hs-update",
           username: username,
           timestamp: timestamp,
-          userHighScores: userHighScores
+          userHighScores: highScores
         });
       }
 
-      // If the score is in the top 10 of the leaderboard, update the leaderboard
-      if(gameIsActive && (leaderboard.length < 10 || score > leaderboard[leaderboard.length - 1].score)){
-        leaderboard.push(scoreData);
+      // If the game is still active, see if the leaderboard needs to be updated
+      if(gameIsActive){
+        let leaders = leaderboard;
 
-        // If there is a new leader - add a comment to the post
-        if(score > leaderboard[0].score){
-          const prevLeader = leaderboard[0].username;
-          if(prevLeader != username){
-            _context.reddit.submitComment({
-              id: `${_context.postId}`,
-              text: `New Yaht-Z Flush leader! u/${username} passed u/${prevLeader}, with a score of ${score}!`
-             });
+        // Get the latest leaderboard from redis in case realtime updates were missed
+        let leaderboardString = await _context.redis.get(`leaderboard_${_context.postId}`);
+        if(leaderboardString){
+          leaders = JSON.parse(leaderboardString);
+          sortScores(leaders);
+        }
+
+        // If the score is in the top 10 of the leaderboard, update the leaderboard
+        if(leaders.length < 10 || score > leaders[leaders.length - 1].score){
+          leaders.push(scoreData);
+
+          // If there is a new leader - add a comment to the post
+          if(score > leaders[0].score){
+            const prevLeader = leaders[0].username;
+            if(prevLeader != username){
+              _context.reddit.submitComment({
+                id: `${_context.postId}`,
+                text: `New Yaht-Z Flush leader! u/${username} passed u/${prevLeader}, with a score of ${score}!`
+              });
+            }
           }
+
+          sortScores(leaders);
+
+          // If the user is in the leaderboard multiple times, only keep the top score
+          leaders = leaders.filter((entry: HighScoreData, index: number, arr: Array<any>) =>
+            arr.findIndex((item: HighScoreData) => item.username === entry.username) === index
+          );
+          
+          if(leaders.length > 10){
+            leaders.length = 10;
+          }
+
+          for(let i = 0; i < leaders.length; i++){
+            leaders[i].rank = i + 1;
+          }
+
+          if(leaders[0].score == score && leaders[0].username == username){
+            gameOverImg = "game_over_1st.png";
+          }
+
+          setLeaderboard(leaders);
+          _context.redis.set(`leaderboard_${_context.postId}`, JSON.stringify(leaders));
+
+          channel.send({
+            eventType: "leaderboard-update",
+            postId: _context.postId,
+            username: username,
+            timestamp: timestamp,
+            leaderboard: leaders
+          });
         }
-
-        sortScores(leaderboard);
-
-        // If the user is in the leaderboard multiple times, only keep the top score
-        leaderboard = leaderboard.filter((entry: HighScoreData, index: number, arr: Array<any>) =>
-          arr.findIndex((item: HighScoreData) => item.username === entry.username) === index
-        );
-        
-        if(leaderboard.length > 10){
-          leaderboard.length = 10;
-        }
-
-        for(let i = 0; i < leaderboard.length; i++){
-          leaderboard[i].rank = i + 1;
-        }
-
-        if(leaderboard[0].score == score && leaderboard[0].timestamp == timestamp && leaderboard[0].username == username){
-          gameOverImg = "game_over_1st.png";
-        }
-
-        setLeaderboard(leaderboard);
-        _context.redis.set(`leaderboard_${_context.postId}`, JSON.stringify(leaderboard));
-
-        channel.send({
-          eventType: "leaderboard-update",
-          postId: _context.postId,
-          username: username,
-          timestamp: timestamp,
-          leaderboard: leaderboard
-        });
       }
 
       return gameOverImg;
@@ -284,6 +309,21 @@ Devvit.addCustomPostType({
       }
     }
 
+    // Used while testing
+    function clearHighScores(user: string){
+      _context.redis.set(`high_scores_${user}`, JSON.stringify([]));
+
+      channel.send({
+        eventType: "user-hs-update",
+        username: user,
+        timestamp: Date.now(),
+        userHighScores: []
+      });
+    }
+    function clearLastGameNumber(){
+      _context.redis.set("last_game_number", "0");
+    }
+
     return (
       <blocks height="tall">
         <vstack height="100%" width="100%" alignment="center top">
@@ -301,5 +341,6 @@ Devvit.addCustomPostType({
     );
   },
 });
+
 
 export default Devvit;

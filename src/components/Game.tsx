@@ -24,7 +24,7 @@ export interface Game {
   username: string,
   userHighScores: Array<HighScoreData>,
   leaderboard: Array<HighScoreData>,
-  updateScores: (score: number, timestamp: EpochTimeStamp) => string,
+  updateScores: (score: number, timestamp: EpochTimeStamp) => Promise<string>,
   updateActiveState: (state: boolean) => void
 }
 
@@ -54,6 +54,7 @@ export const Game: Devvit.BlockComponent<Game> = (
   let [categorySelected, setCategorySelected] = useState(false);
   let [gameOverImg, setGameOverImg] = useState("game_over.png");
   let [gameTimestamp, setGameTimestamp] = useState(0);
+  let [gameOverLoading, setGameOverLoading] = useState(false);
   let [showSplashPage, setShowSplashPage] = useState(true);
   let [showMenu, setShowMenu] = useState(false);
   let [showGameOver, setShowGameOver] = useState(false);
@@ -79,6 +80,25 @@ export const Game: Devvit.BlockComponent<Game> = (
     }
     return jsonify(diceArr);
   });
+
+  // Used to update the high scores and leaderboard asynchronously when the game is over
+  useAsync(
+    async () => {
+      if(gameOverLoading){
+        const gameOverImg = await updateScores(scorecard.totalScore, gameTimestamp);
+        return gameOverImg;
+      }
+    },
+    {
+      depends: [gameOverLoading],
+      finally: async (gameOverImg: any) => {
+        if(gameOverLoading){
+          setGameOverImg(gameOverImg);
+          setGameOverLoading(false);
+        }
+      },
+    }
+  );
 
   // Used to update the dice asynchronously while rolling
   useAsync(
@@ -284,10 +304,9 @@ export const Game: Devvit.BlockComponent<Game> = (
       setRollsLeft(0);
       setCategorySelected(false);
       setGameTimestamp(timestamp);
-      
-      // Update the high scores and leaderboard and determine the Game Over image to display
-      const gameOverImg = updateScores(scorecard.totalScore, timestamp);
-      setGameOverImg(gameOverImg);
+
+      // Show the game over modal and kick off the asynchronous process for updating the high scores and leaderboard
+      setGameOverLoading(true);
       setShowGameOver(true);
     }
 
@@ -371,6 +390,7 @@ export const Game: Devvit.BlockComponent<Game> = (
 
         <GameOver
           showGameOver={showGameOver}
+          loading={gameOverLoading}
           score={scorecard.totalScore}
           img={gameOverImg}
           startNewGame={startNewGame}

@@ -56,7 +56,7 @@ export const HighScores: Devvit.BlockComponent<HighScoresProps> = (
 
         <vstack grow alignment="center middle" backgroundColor={Colors.blue}>
           <vstack height="40%" padding="medium" gap="medium" cornerRadius="small" alignment="center middle" backgroundColor={Colors.whiteAlt}>
-            <text size="large">No scores recorded yet for {username}</text>
+            <text size="large" wrap>No scores recorded yet for {username}</text>
             <text size="xxlarge" height="30px">Start playing!</text>
           </vstack>
         </vstack>
