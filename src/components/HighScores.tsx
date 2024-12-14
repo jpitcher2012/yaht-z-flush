@@ -38,7 +38,9 @@ export const HighScores: Devvit.BlockComponent<HighScoresProps> = (
 
         <vstack grow alignment="center middle" backgroundColor={Colors.blue}>
           <vstack height="40%" padding="medium" cornerRadius="small" alignment="center middle" backgroundColor={Colors.whiteAlt}>
-            <text size="large" wrap>You must be logged in to track your high scores</text>
+            <text size="large" wrap color={Colors.blackAlt}>
+              You must be logged in to track your high scores
+            </text>
           </vstack>
         </vstack>
       </vstack>
@@ -56,8 +58,12 @@ export const HighScores: Devvit.BlockComponent<HighScoresProps> = (
 
         <vstack grow alignment="center middle" backgroundColor={Colors.blue}>
           <vstack height="40%" padding="medium" gap="medium" cornerRadius="small" alignment="center middle" backgroundColor={Colors.whiteAlt}>
-            <text size="large" wrap>No scores recorded yet for {username}</text>
-            <text size="xxlarge" height="30px">Start playing!</text>
+            <text size="large" wrap color={Colors.blackAlt}>
+              No scores recorded yet for {username}
+            </text>
+            <text size="xxlarge" height="30px" color={Colors.blackAlt}>
+              Start playing!
+            </text>
           </vstack>
         </vstack>
       </vstack>
