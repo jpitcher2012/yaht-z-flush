@@ -6,7 +6,6 @@ interface InfoModalProps {
   header: string;
   body: string;
   btnText: string;
-  clickBtn: () => void;
   clickClose: () => void;
 }
 
@@ -16,7 +15,6 @@ export const InfoModal: Devvit.BlockComponent<InfoModalProps> = (
     header,
     body,
     btnText,
-    clickBtn,
     clickClose
   }
 ) => {
@@ -51,12 +49,13 @@ export const InfoModal: Devvit.BlockComponent<InfoModalProps> = (
           <vstack width="100%" height="1px" backgroundColor={Colors.lightGray} />
 
           <hstack padding="small" gap="medium" width="100%" alignment="end middle">
-            <vstack 
+            <vstack
+              minWidth="55px" 
               backgroundColor={Colors.blue}
               padding="small"
               cornerRadius="small"
               alignment="center middle"
-              onPress={clickBtn}
+              onPress={clickClose}
             >
               <text size="large" color={Colors.whiteAlt}>
                 {btnText}

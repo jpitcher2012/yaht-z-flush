@@ -25,7 +25,7 @@ export const ConfirmationModal: Devvit.BlockComponent<ConfirmationModalProps> = 
 
         <vstack width="100%" height="100%" backgroundColor={Colors.disabled}/>
 
-        <vstack width="310px" cornerRadius="small" backgroundColor={Colors.whiteAlt} borderColor={Colors.gray} border="thick">
+        <vstack width="325px" cornerRadius="small" backgroundColor={Colors.whiteAlt} borderColor={Colors.gray} border="thick">
           
           <hstack padding="small" width="100%">
             <vstack width="90%" alignment="start top">
