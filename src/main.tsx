@@ -222,7 +222,7 @@ Devvit.addCustomPostType({
             if(prevLeader != username){
               _context.reddit.submitComment({
                 id: `${_context.postId}`,
-                text: `New Yaht-Z Flush leader! u/${username} passed u/${prevLeader}, with a score of ${score}!`
+                text: `New Yaht-Z Flush leader${gameNumber ? " for game #" + gameNumber : ""}! u/${username} passed u/${prevLeader}, with a score of ${score}!`
               });
             }
           }
