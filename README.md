@@ -19,7 +19,7 @@ Click again to deselect. When you are ready to submit your score for the round, 
 
 ## Scoring - Right Side
 
-* Chance - Sum of all dice</td>
+* Chance - Sum of all dice
 * Full House - 25 pts - Requires 3 dice of one number and 2 of another
 * Sm Straight - 30 pts - Requires 4 numbers in a row (ex: 2-3-4-5) \*
 * Lg Straight - 40 pts - Requires 5 numbers in a row (ex: 2-3-4-5-6) \*
