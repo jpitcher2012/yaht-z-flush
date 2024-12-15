@@ -32,13 +32,25 @@ export const Scorecard: Devvit.BlockComponent<ScorecardProps> = (
                 </text>
               </vstack>
               <vstack width="33%" padding="small" borderColor={Colors.blackAlt}>
-                <text 
-                  size="large"
-                  weight={category.completed || category.selected ? 'bold' : 'regular'}
-                  color={category.selected ? Colors.whiteAlt : category.scoreColor}
-                >
-                  {category.score > 0 || category.completed || category.selected ? category.score : ''}
-                </text>
+                <hstack width="100%">
+                  <text 
+                    size="large"
+                    weight={category.completed || category.selected ? 'bold' : 'regular'}
+                    color={category.selected ? Colors.whiteAlt : category.scoreColor}
+                  >
+                    {category.score > 0 || category.completed || category.selected ? category.score : ''}
+                  </text>
+                  <vstack grow alignment="end middle">
+                    {!category.completed && category.score > 0 &&
+                      <icon 
+                        name={category.selected ? "checkmark" : "add"} 
+                        size={category.selected ? "small" : "xsmall"}
+                        color={category.selected ? Colors.whiteAlt : category.scoreColor}
+                      />
+                    }
+                  </vstack>
+                </hstack>
+
               </vstack>
             </hstack>
         ))}
@@ -74,13 +86,24 @@ export const Scorecard: Devvit.BlockComponent<ScorecardProps> = (
               </text>
             </hstack>
             <vstack width="33%" padding="small" borderColor={Colors.blackAlt}>
-              <text 
-                size="large"
-                weight={category.completed || category.selected ? 'bold' : 'regular'}
-                color={category.selected ? Colors.whiteAlt : category.scoreColor}
-              >
-                {category.score > 0 || category.completed || category.selected ? category.score : ''}
-              </text>
+              <hstack width="100%">
+                <text 
+                  size="large"
+                  weight={category.completed || category.selected ? 'bold' : 'regular'}
+                  color={category.selected ? Colors.whiteAlt : category.scoreColor}
+                >
+                  {category.score > 0 || category.completed || category.selected ? category.score : ''}
+                </text>
+                <vstack grow alignment="end middle">
+                  {!category.completed && category.score > 0 &&
+                    <icon 
+                      name={category.selected ? "checkmark-fill" : "add-fill"} 
+                      size={category.selected ? "small" : "xsmall"}
+                      color={category.selected ? Colors.whiteAlt : category.scoreColor}
+                    />
+                  }
+                </vstack>
+              </hstack>
             </vstack>
           </hstack>
         ))}
